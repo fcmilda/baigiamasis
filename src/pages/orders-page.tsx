@@ -17,7 +17,7 @@ const OrdersPage: React.FC = () => {
   return (
     <>
       <SectionTitle title="Užsisakyk" description="Nuo ruginės duonos iki šventinių pyragų" />
-      <ItemsContainer>{items.map(({ id, ...itemProps }) => <ItemCard key={id} {...itemProps} />)}</ItemsContainer>
+      <ItemsContainer>{items.map((itemProps) => <ItemCard key={itemProps.id} {...itemProps} />)}</ItemsContainer>
     </>
   );
 };
