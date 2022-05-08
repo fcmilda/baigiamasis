@@ -1,50 +1,75 @@
 import React, { createContext, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import User from '../../types/user';
-import useLocalStorage from '../../hooks/use-local-storage-state';
+import { User, Credentials, UserRegistration } from '../../types';
+import AuthService, { AuthPromise } from './auth-service';
 
 export type AuthContextType = {
   user: null | User,
   loggedIn: boolean,
-  login: () => void,
+  error: string | null,
+  clearError: () => void,
+  login: (credentials: Credentials, next: string) => void,
   logout: () => void,
+  register: (userRegistration: UserRegistration) => void,
 };
 
-const initialValue: AuthContextType = {
-  user: null,
-  loggedIn: false,
-  login: () => {
-    throw new Error('AuthContext.login is not implemented');
-  },
-  logout: () => {
-    throw new Error('AuthContext.logout is not implemented');
-  },
-};
-
-const AuthContext = createContext(initialValue);
+const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
 export const AuthProvider: React.FC = ({ children }) => {
   const navigate = useNavigate();
-  const [loggedIn, setLoggedIn] = useLocalStorage<AuthContextType['loggedIn']>('loggedIn', false);
   const [user, setUser] = useState<AuthContextType['user']>(null);
+  const [error, setError] = useState<AuthContextType['error']>(null);
 
-  const login: AuthContextType['login'] = () => {
-    setLoggedIn(true);
-    console.log(setLoggedIn);
-    navigate('/uzsakymai');
+  const authenticate = async (credentials: Credentials, authMethod: AuthPromise, next = '/admin') => {
+    try {
+      const loggedInUser = await authMethod(credentials);
+      setUser(loggedInUser);
+      navigate(next);
+    } catch (err) {
+      const { message } = (err as Error);
+      setError(message);
+    }
+  };
+
+  const login: AuthContextType['login'] = async (credentials: Credentials, next) => {
+    if (error) {
+      setError(null);
+    }
+    authenticate(credentials, AuthService.login, next);
+  };
+
+  const register: AuthContextType['register'] = async ({ email, password, repeatPassword }) => {
+    if (error) {
+      setError(null);
+    }
+    if (password !== repeatPassword) {
+      setError('Slaptažodžiai nesutampa');
+      return;
+    }
+    const credentials: Credentials = {
+      email, password,
+    };
+    authenticate(credentials, AuthService.register);
   };
 
   const logout: AuthContextType['logout'] = () => {
-    setLoggedIn(false);
+    setUser(null);
     navigate('/');
+  };
+
+  const clearError: AuthContextType['clearError'] = () => {
+    setError(null);
   };
 
   const providerValue = useMemo(() => ({
     user,
-    loggedIn,
+    loggedIn: Boolean(user),
+    error,
+    clearError,
     login,
     logout,
-  }), [loggedIn, user]);
+    register,
+  }), [user, error]);
 
   return (
     <AuthContext.Provider value={providerValue}>
