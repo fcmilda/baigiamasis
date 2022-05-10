@@ -13,6 +13,18 @@ type ContactFormValues = {
   message: string
 };
 
+const validationSchema = Yup.object({
+  name: Yup.string()
+    .max(15, 'Vardas turi būti iki 15 simbolių')
+    .required('Šis laukas privalomas'),
+  email: Yup.string()
+    .email('Neteisingas el. pašto formatas')
+    .required('Šis laukas privalomas'),
+  message: Yup.string()
+    .max(200, 'Žinutė turi būti iki 200 simbolių')
+    .required('Šis laukas privalomas'),
+});
+
 const ContactsPage: React.FC = () => {
   const formik = useFormik<ContactFormValues>({
     initialValues: {
@@ -20,17 +32,7 @@ const ContactsPage: React.FC = () => {
       email: '',
       message: '',
     },
-    validationSchema: Yup.object({
-      name: Yup.string()
-        .max(15, 'Vardas turi būti iki 15 simbolių')
-        .required('Šis laukas privalomas'),
-      email: Yup.string()
-        .email('Neteisingas el. pašto formatas')
-        .required('Šis laukas privalomas'),
-      message: Yup.string()
-        .max(200, 'Žinutė turi būti iki 200 simbolių')
-        .required('Šis laukas privalomas'),
-    }),
+    validationSchema,
     onSubmit: (values) => {
       console.log(values);
     },
@@ -54,20 +56,14 @@ const ContactsPage: React.FC = () => {
         onSubmit={formik.handleSubmit}
       >
         <ContactMailIcon color="primary" sx={{ fontSize: 45 }} />
-
         <Box sx={{
           display: 'flex',
           width: 1 / 1,
           my: 2,
           justifyContent: 'center',
         }}
-
         >
-          <Box sx={{
-            display: 'flex',
-            flexDirection: 'column',
-          }}
-          >
+          <Box sx={{ display: 'flex', flexDirection: 'column' }}>
             <TextField
               sx={{ mb: 1, mr: 2 }}
               id="name"
@@ -82,11 +78,7 @@ const ContactsPage: React.FC = () => {
               ? <Typography sx={{ my: 0, fontSize: 12, color: 'red' }}>{formik.errors.name}</Typography>
               : null}
           </Box>
-          <Box sx={{
-            display: 'flex',
-            flexDirection: 'column',
-          }}
-          >
+          <Box sx={{ display: 'flex', flexDirection: 'column' }}>
             <TextField
               sx={{ mb: 1 }}
               id="email"
@@ -98,15 +90,12 @@ const ContactsPage: React.FC = () => {
               value={formik.values.email}
             />
             {formik.touched.email && formik.errors.email
-              ? <Typography sx={{ my: 0, fontSize: 12, color: 'red' }}>{formik.errors.email}</Typography>
-              : null}
+              && <Typography sx={{ my: 0, fontSize: 12, color: 'red' }}>{formik.errors.email}</Typography>}
           </Box>
         </Box>
         <Box>
           <TextField
-            sx={{
-              width: '435px', mt: 1,
-            }}
+            sx={{ width: '435px', mt: 1 }}
             id="message"
             label="Žinutė"
             variant="outlined"
