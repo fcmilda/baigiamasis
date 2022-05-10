@@ -1,3 +1,4 @@
+import pause from 'helpers/pause';
 import React, { createContext, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { User, Credentials, UserRegistration } from '../../types';
@@ -7,6 +8,7 @@ export type AuthContextType = {
   user: null | User,
   loggedIn: boolean,
   error: string | null,
+  loading: boolean,
   clearError: () => void,
   login: (credentials: Credentials, next: string) => void,
   logout: () => void,
@@ -19,26 +21,31 @@ export const AuthProvider: React.FC = ({ children }) => {
   const navigate = useNavigate();
   const [user, setUser] = useState<AuthContextType['user']>(null);
   const [error, setError] = useState<AuthContextType['error']>(null);
+  const [loading, setLoading] = useState<AuthContextType['loading']>(false);
 
   const authenticate = async (credentials: Credentials, authMethod: AuthPromise, next = '/admin') => {
     try {
+      setLoading(true);
+      await pause(3000);
       const loggedInUser = await authMethod(credentials);
       setUser(loggedInUser);
       navigate(next);
     } catch (err) {
       const { message } = (err as Error);
       setError(message);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const login: AuthContextType['login'] = async (credentials: Credentials, next) => {
+  const login: AuthContextType['login'] = (credentials: Credentials, next) => {
     if (error) {
       setError(null);
     }
     authenticate(credentials, AuthService.login, next);
   };
 
-  const register: AuthContextType['register'] = async ({ email, password, repeatPassword }) => {
+  const register: AuthContextType['register'] = ({ email, password, repeatPassword }) => {
     if (error) {
       setError(null);
     }
@@ -65,11 +72,12 @@ export const AuthProvider: React.FC = ({ children }) => {
     user,
     loggedIn: Boolean(user),
     error,
+    loading,
     clearError,
     login,
     logout,
     register,
-  }), [user, error]);
+  }), [user, error, loading]);
 
   return (
     <AuthContext.Provider value={providerValue}>
