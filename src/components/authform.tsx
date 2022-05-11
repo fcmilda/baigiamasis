@@ -56,7 +56,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
         <Box sx={{
           display: 'flex',
           flexDirection: 'column',
-          gap: 2,
+          gap: 1,
           width: 1 / 1,
           my: 2,
         }}

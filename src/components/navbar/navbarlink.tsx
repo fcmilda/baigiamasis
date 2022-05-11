@@ -17,12 +17,12 @@ const NavbarLink = styled(NavLink)(({ theme }) => ({
   '&.active': {
     color: theme.palette.manoSpalva.light,
     boxShadow: `inset 0px -3px 0px 0px ${theme.palette.manoSpalva.light}`,
-    fontWeight: 900,
+    // fontWeight: 900,
   },
 
   ':hover': {
     color: theme.palette.manoSpalva.light,
-    fontWeight: 900,
+    // fontWeight: 900,
   },
 
 }));

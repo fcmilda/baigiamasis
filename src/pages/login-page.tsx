@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { useFormik, FormikConfig } from 'formik';
 import * as Yup from 'yup';
 import {
-  Container, TextField,
+  Box, Container, TextField, Typography,
 } from '@mui/material';
 import AuthForm from 'components/authform';
 import SectionTitle from '../components/sectiontitle';
@@ -69,27 +69,43 @@ const LoginPage: React.FC = () => {
         <TextField
           name="email"
           type="email"
-          label="Email"
+          label="El. paštas"
           fullWidth
           value={values.email}
           onChange={handleChange}
           onBlur={handleBlur}
           error={touched.email && Boolean(errors.email)}
-          helperText={touched.email && errors.email}
+          // helperText={touched.email && errors.email}
           disabled={loading}
         />
+        {touched.email && errors.email ? (
+          <Typography sx={{
+            my: 0, fontSize: 12, color: 'red', textAlign: 'center',
+          }}
+          >
+            {errors.email}
+          </Typography>
+        ) : <Box sx={{ my: '9px' }} />}
         <TextField
           name="password"
           type="password"
-          label="Password"
+          label="Slaptažodis"
           fullWidth
           value={values.password}
           onChange={handleChange}
           onBlur={handleBlur}
           error={touched.password && Boolean(errors.password)}
-          helperText={touched.password && errors.password}
+          // helperText={touched.password && errors.password}
           disabled={loading}
         />
+        {touched.password && errors.password ? (
+          <Typography sx={{
+            my: 0, fontSize: 12, color: 'red', textAlign: 'center',
+          }}
+          >
+            {errors.password}
+          </Typography>
+        ) : <Box sx={{ my: '9px' }} />}
       </AuthForm>
     </Container>
   );

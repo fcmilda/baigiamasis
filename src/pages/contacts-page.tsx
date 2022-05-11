@@ -74,9 +74,11 @@ const ContactsPage: React.FC = () => {
               onBlur={formik.handleBlur}
               value={formik.values.name}
             />
-            {formik.touched.name && formik.errors.name
-              ? <Typography sx={{ my: 0, fontSize: 12, color: 'red' }}>{formik.errors.name}</Typography>
-              : null}
+            {formik.touched.name && formik.errors.name ? (
+              <Typography sx={{ my: 0, fontSize: 12, color: 'red' }}>
+                {formik.errors.name}
+              </Typography>
+            ) : <Box sx={{ my: '9px' }} />}
           </Box>
           <Box sx={{ display: 'flex', flexDirection: 'column' }}>
             <TextField
@@ -89,8 +91,11 @@ const ContactsPage: React.FC = () => {
               onBlur={formik.handleBlur}
               value={formik.values.email}
             />
-            {formik.touched.email && formik.errors.email
-              && <Typography sx={{ my: 0, fontSize: 12, color: 'red' }}>{formik.errors.email}</Typography>}
+            {formik.touched.email && formik.errors.email ? (
+              <Typography sx={{ my: 0, fontSize: 12, color: 'red' }}>
+                {formik.errors.email}
+              </Typography>
+            ) : <Box sx={{ my: '9px' }} />}
           </Box>
         </Box>
         <Box>
@@ -104,9 +109,11 @@ const ContactsPage: React.FC = () => {
             onBlur={formik.handleBlur}
             value={formik.values.message}
           />
-          {formik.touched.message && formik.errors.message
-            ? <Typography sx={{ my: 0, fontSize: 12, color: 'red' }}>{formik.errors.message}</Typography>
-            : null}
+          {formik.touched.message && formik.errors.message ? (
+            <Typography sx={{ mt: 1, fontSize: 12, color: 'red' }}>
+              {formik.errors.message}
+            </Typography>
+          ) : <Box sx={{ my: '26px' }} />}
         </Box>
         <Box>
           <Button variant="contained" size="large" type="submit" sx={{ boxShadow: '0', mt: 2 }}>Siųsti</Button>
